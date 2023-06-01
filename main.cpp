@@ -4,6 +4,7 @@
 #include<numbers>
 #include<imgui.h>
 #include"struct.h"
+#include<algorithm>
 struct Matrix4x4
 {
 	float m[4][4];
@@ -381,8 +382,33 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 	}
 
 };
-Vector3 Project(const Vector3& v1,const Vector3& v2) {
+float Dot(const Vector3& v1, const Vector3& v2) {
+	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+}
+float Length(const Vector3& v) {
+	return sqrtf(Dot(v,v));
 
+}
+
+Vector3 Normalise(const Vector3& v) {
+	float len = Length(v);
+	if (len != 0) {
+		return { v.x / len,v.y / len,v.z / len };
+	}
+	return v;
+}
+Vector3 Project(const Vector3& v1,const Vector3& v2) {
+	Vector3 result;
+	result.x = Dot(v1, Normalise(v2)) * v2.x;
+	result.y = Dot(v1, Normalise(v2)) * v2.y;
+	result.z = Dot(v1, Normalise(v2)) * v2.z;
+	return result;
+}
+Vector3 Closestpoint(const Vector3& point, const Segment& segment) {
+	float length = Length(segment.diff);
+	Vector3 normaliseSeg = { segment.diff.x / length,segment.diff.y / length,segment.diff.z / length };
+
+	float distance=Dot(point-segment.origin)
 }
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
