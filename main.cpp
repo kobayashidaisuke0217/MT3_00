@@ -3,17 +3,12 @@
 #include <math.h>
 #include<numbers>
 #include<imgui.h>
+#include"struct.h"
 struct Matrix4x4
 {
 	float m[4][4];
 };
 
-struct Vector3
-{
-	float x;
-	float y;
-	float z;
-};
 
 const char kWindowTitle[] = "LE2B_12_コバヤシ_ダイスケ";
 
@@ -386,6 +381,9 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 	}
 
 };
+Vector3 Project(const Vector3& v1,const Vector3& v2) {
+
+}
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -405,7 +403,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 translate{};
 	Vector3 cameraPosition{ 0.0f,1.9f,-6.49f };
 	Vector3 cameraRotate{ 0.26f,0.0f,0.0f };
-	
+	Sphere sphere = { 0.0f,0.0f,0.0f,1.0f };
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
 		Novice::BeginFrame();
@@ -451,12 +449,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		
 		DrawGrid(worldViewProjectionMatrix, viewPortMatrix);
-		
+		//DrawSphere(sphere, worldViewProjectionMatrix, viewPortMatrix, BLACK);
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("CameraTranslate", &cameraPosition.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-		
-		
+		ImGui::DragFloat3("SphereCenter", &sphere.center.x, 0.01f);
+		ImGui::DragFloat("SphereRadius", &sphere.radius, 0.01f);
 		ImGui::End();
 		///
 		/// ↑描画処理ここまで
