@@ -443,11 +443,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Segment segment = { {-2.0f,-1.0f,0.0f},{3.0f,2.0f,2.0f} };
 	Vector3 point = { -1.5f,0.6f,0.6f };
 
-	Vector3 project = Project(Subtract(point, segment.origin), segment.diff);
-	Vector3 closestPoint = Closestpoint(point, segment);
-
-	Sphere pointSphere = { point,0.01f };
-	Sphere closestPointSphere = { closestPoint,0.01f };
+	
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
 		Novice::BeginFrame();
@@ -459,7 +455,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
-		
+		Vector3 project = Project(Subtract(point, segment.origin), segment.diff);
+		Vector3 closestPoint = Closestpoint(point, segment);
+
+		Sphere pointSphere = { point,0.01f };
+		Sphere closestPointSphere = { closestPoint,0.01f };
 		if (keys[DIK_A]) {
 			translate.x -= 0.1f;
 		}
@@ -487,7 +487,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("CameraTranslate", &cameraPosition.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("point", &pointSphere.center.x, 0.01f);
+		ImGui::DragFloat3("point", &point.x, 0.01f);
 		ImGui::DragFloat3("Segment origin", &segment.origin.x, 0.01f);
 		ImGui::DragFloat3("Segment diff", &segment.diff.x, 0.01f);
 		ImGui::InputFloat3("Project", &project.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
