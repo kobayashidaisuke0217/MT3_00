@@ -14,3 +14,8 @@
 	Vector3 origin;
 	Vector3 diff;
 };
+ struct Plane
+ {
+	 Vector3 normal;
+	 float distance;
+ };
