@@ -465,7 +465,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// キー入力を受け取る
 		memcpy(preKeys, keys, 256);
 		Novice::GetHitKeyStateAll(keys);
-
+		
 		///
 		/// ↓更新処理ここから
 		///
@@ -497,6 +497,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 		if (keys[DIK_UP]) {
 			rotate.x += 0.05f;
+		}
+		if (Novice::GetWheel() > 0) {
+			cameraPosition.z += 0.5f;
+		}
+		else if (Novice::GetWheel() < 0) {
+			cameraPosition.z -= 0.5f;
 		}
 		Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotate, translate);
 		Matrix4x4 cameraMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, cameraRotate, cameraPosition);
@@ -531,8 +537,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		DrawSphere(sphere1, worldViewProjectionMatrix, viewPortMatrix,color);
 		DrawSphere(sphere2, worldViewProjectionMatrix, viewPortMatrix, color);
-		/*DrawSphere(pointSphere, worldViewProjectionMatrix, viewPortMatrix, RED);
-		DrawSphere(closestPointSphere, worldViewProjectionMatrix, viewPortMatrix, BLACK);*/
 		Novice::DrawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, WHITE);
 		DrawGrid(worldViewProjectionMatrix, viewPortMatrix);
 		
