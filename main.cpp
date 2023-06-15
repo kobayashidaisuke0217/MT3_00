@@ -491,7 +491,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Sphere sphere1{ { 1.0f, 0.0f, 0.0f }, 1.0f };
 
 
-	Plane plane = { {1.0f,1.0f,1.0f},1.0f };
+	Plane plane = { {0.0f,1.0f,0.0f},1.0f };
 	unsigned int color = BLACK;
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
