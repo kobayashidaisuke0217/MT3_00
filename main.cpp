@@ -475,6 +475,9 @@ bool IsCollision(const Segment& segment,const Plane& plane) {
 	if (0.0f <= t && t <= 1.0f) {
 		return true;
 	}
+	else {
+		return false;
+	}
 }
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -528,16 +531,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			translate.y += 0.1f;
 		}
 		if (keys[DIK_LEFT]) {
-			rotate.y -= 0.05f;
+			rotate.y -= 0.01f;
 		}
 		if (keys[DIK_RIGHT]) {
-			rotate.y += 0.05f;
+			rotate.y += 0.01f;
 		}
 		if (keys[DIK_DOWN]) {
-			rotate.x -= 0.05f;
+			rotate.x -= 0.01f;
 		}
 		if (keys[DIK_UP]) {
-			rotate.x += 0.05f;
+			rotate.x += 0.01f;
 		}
 		if (Novice::GetWheel() > 0) {
 			cameraPosition.z += 0.5f;
@@ -552,17 +555,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 		Matrix4x4 viewPortMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-	
+		Vector3 start = Transform(Transform(segment.origin, worldViewProjectionMatrix), viewPortMatrix);
+		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff), worldViewProjectionMatrix), viewPortMatrix);
 		
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("segment diff", &segment.diff.x, 0.01f);
-		ImGui::DragFloat("segment origin", &segment.origin.x, 0.01f);
+		ImGui::DragFloat3("segment origin", &segment.origin.x, 0.01f);
 		ImGui::DragFloat3("Plane normal", &plane.normal.x, 0.01f);
-		plane.normal = Normalise(plane.normal);
+		
 		ImGui::DragFloat("Plane Distance", &plane.distance, 0.01f);
 		ImGui::TextUnformatted("UP:DOWN:LEFT:RIGHT::cameraRotate");
 		ImGui::End();
-
+		plane.normal = Normalise(plane.normal);
 		if (IsCollision(segment, plane)) {
 			color = RED;
 		}
@@ -578,7 +582,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		DrawPlane(plane, worldViewProjectionMatrix, viewPortMatrix, WHITE);
 		//DrawSphere(sphere1, worldViewProjectionMatrix, viewPortMatrix,color);
-		
+		Novice::DrawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, color);
 		
 		DrawGrid(worldViewProjectionMatrix, viewPortMatrix);
 		
