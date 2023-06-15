@@ -466,6 +466,16 @@ void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const 
 	Novice::DrawLine((int)points[2].x, (int)points[2].y, (int)points[1].x, (int)points[1].y, color);
 	Novice::DrawLine((int)points[3].x, (int)points[3].y, (int)points[0].x, (int)points[0].y, color);
 }
+bool IsCollision(const Segment& segment,const Plane& plane) {
+	float dot = Dot(segment.diff, plane.normal);
+	if (dot == 0.0f) {
+		return false;
+	}
+	float t = (plane.distance - Dot(segment.origin, plane.normal)) / dot;
+	if (0.0f <= t && t <= 1.0f) {
+		return true;
+	}
+}
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -486,9 +496,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraPosition{ 0.0f,1.9f,-6.49f };
 	Vector3 cameraRotate{ 0.26f,0.0f,0.0f };
 	
+	Segment segment{ { 0.0f, 0.0f, 0.0f }, {0.0f,1.0f,0.0f} };
 
-
-	Sphere sphere1{ { 1.0f, 0.0f, 0.0f }, 1.0f };
+	//Sphere sphere1{ { 1.0f, 0.0f, 0.0f }, 1.0f };
 
 
 	Plane plane = { {0.0f,1.0f,0.0f},1.0f };
@@ -545,15 +555,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	
 		
 		ImGui::Begin("Window");
-		ImGui::DragFloat3("Sphere1 center", &sphere1.center.x, 0.01f);
-		ImGui::DragFloat("Sphere1 radius", &sphere1.radius, 0.01f);
+		ImGui::DragFloat3("segment diff", &segment.diff.x, 0.01f);
+		ImGui::DragFloat("segment origin", &segment.origin.x, 0.01f);
 		ImGui::DragFloat3("Plane normal", &plane.normal.x, 0.01f);
 		plane.normal = Normalise(plane.normal);
 		ImGui::DragFloat("Plane Distance", &plane.distance, 0.01f);
 		ImGui::TextUnformatted("UP:DOWN:LEFT:RIGHT::cameraRotate");
 		ImGui::End();
 
-		if (IsCollision(sphere1, plane)) {
+		if (IsCollision(segment, plane)) {
 			color = RED;
 		}
 		else {
@@ -567,7 +577,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 		DrawPlane(plane, worldViewProjectionMatrix, viewPortMatrix, WHITE);
-		DrawSphere(sphere1, worldViewProjectionMatrix, viewPortMatrix,color);
+		//DrawSphere(sphere1, worldViewProjectionMatrix, viewPortMatrix,color);
 		
 		
 		DrawGrid(worldViewProjectionMatrix, viewPortMatrix);
