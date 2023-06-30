@@ -479,6 +479,16 @@ bool IsCollision(const Segment& segment,const Plane& plane) {
 		return false;
 	}
 }
+void DrawTriangle(const Triangle& triangle,const Matrix4x4& viewProjection,const Matrix4x4& viewport,uint32_t color) {
+	Vector3 verticle[3];
+	for (int i = 0; i < 3; i++) {
+		verticle[i] = Transform(Transform(triangle.verticles[i], viewProjection),viewport);
+	}
+	Novice::DrawTriangle((int)verticle[0].x, (int)verticle[0].y, (int)verticle[1].x, (int)verticle[1].y, (int)verticle[2].x, (int)verticle[2].y, color, kFillModeWireFrame);
+}
+bool IsCollison(const Segment& segment, const Triangle& triangle) {
+
+}
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -500,11 +510,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraRotate{ 0.26f,0.0f,0.0f };
 	
 	Segment segment{ { 0.0f, 0.0f, 0.0f }, {0.0f,1.0f,0.0f} };
-
-	//Sphere sphere1{ { 1.0f, 0.0f, 0.0f }, 1.0f };
-
-
-	Plane plane = { {0.0f,1.0f,0.0f},1.0f };
+	Triangle triangle;
+	triangle.verticles[0] = { -1.0f, 0.0f, 0.0f };
+	triangle.verticles[1] = { 0.0f, 1.0f, 0.0f };
+	triangle.verticles[2] = {1.0f, 0.0f, 0.0f};
 	unsigned int color = BLACK;
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -561,13 +570,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("segment diff", &segment.diff.x, 0.01f);
 		ImGui::DragFloat3("segment origin", &segment.origin.x, 0.01f);
-		ImGui::DragFloat3("Plane normal", &plane.normal.x, 0.01f);
-		
-		ImGui::DragFloat("Plane Distance", &plane.distance, 0.01f);
+		ImGui::DragFloat3("verticles0", &triangle.verticles[0].x, 0.01f);
+		ImGui::DragFloat3("verticles1", &triangle.verticles[1].x, 0.01f);
+		ImGui::DragFloat3("verticles2", &triangle.verticles[2].x, 0.01f);
 		ImGui::TextUnformatted("UP:DOWN:LEFT:RIGHT::cameraRotate");
 		ImGui::End();
-		plane.normal = Normalise(plane.normal);
-		if (IsCollision(segment, plane)) {
+		if (IsCollision(segment, triangle)) {
 			color = RED;
 		}
 		else {
@@ -580,9 +588,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓描画処理ここから
 		///
-		DrawPlane(plane, worldViewProjectionMatrix, viewPortMatrix, WHITE);
+		DrawTriangle(triangle, worldViewProjectionMatrix, viewPortMatrix,color);
 		//DrawSphere(sphere1, worldViewProjectionMatrix, viewPortMatrix,color);
-		Novice::DrawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, color);
+		Novice::DrawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, 0xffffffff);
 		
 		DrawGrid(worldViewProjectionMatrix, viewPortMatrix);
 		

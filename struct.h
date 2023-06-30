@@ -19,3 +19,6 @@
 	 Vector3 normal;
 	 float distance;
  };
+ struct Triangle {
+	 Vector3 verticles[3];
+ };
