@@ -486,8 +486,52 @@ void DrawTriangle(const Triangle& triangle,const Matrix4x4& viewProjection,const
 	}
 	Novice::DrawTriangle((int)verticle[0].x, (int)verticle[0].y, (int)verticle[1].x, (int)verticle[1].y, (int)verticle[2].x, (int)verticle[2].y, color, kFillModeWireFrame);
 }
-bool IsCollison(const Segment& segment, const Triangle& triangle) {
+bool IsCollision(const Segment& segment, const Triangle& triangle) {
+	Plane plane{};
+	plane.normal =
+	Normalise(
+			Cross(
+				Subtract(triangle.verticles[1], triangle.verticles[0]),
+				Subtract(triangle.verticles[2], triangle.verticles[1])
+			)
+		);
 
+	plane.distance = Dot(triangle.verticles[0], plane.normal);
+
+	float dot = Dot(plane.normal, segment.diff);
+
+	if (dot == 0.0f) {
+		return false;
+	}
+	float t = (plane.distance - Dot(segment.origin, plane.normal)) / dot;
+
+	if (0.0f < t && t < 1.0f) {
+		Vector3 p = Add(segment.origin, Multiply(t, segment.diff));
+
+
+		Vector3 cross01 = Cross(
+			Subtract(triangle.verticles[1], triangle.verticles[0]),
+			Subtract(p, triangle.verticles[1])
+		);
+		Vector3 cross12 = Cross(
+			Subtract(triangle.verticles[2], triangle.verticles[1]),
+			Subtract(p, triangle.verticles[2])
+		);
+		Vector3 cross20 = Cross(
+		Subtract(triangle.verticles[0], triangle.verticles[2]),
+		Subtract(p, triangle.verticles[0])
+		);
+
+
+		if (Dot(cross01, plane.normal) >= 0.0f &&
+			Dot(cross12, plane.normal) >= 0.0f &&
+			Dot(cross20, plane.normal) >= 0.0f) {
+			return true;
+		}
+
+	}
+
+	return false;
 }
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
