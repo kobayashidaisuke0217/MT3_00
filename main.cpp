@@ -594,6 +594,21 @@ bool IsCollision(const AABB& aabb1, const AABB& aabb2) {
 	return false;
 
 }
+bool IsCollision(const AABB& aabb, const Sphere& sphere) {
+	Vector3 clossestPoint{
+		std::clamp(sphere.center.x, aabb.min.x, aabb.max.x),
+		std::clamp(sphere.center.y, aabb.min.y, aabb.max.y),
+		std::clamp(sphere.center.z, aabb.min.z, aabb.max.z)
+	};
+
+	float distance = Length(Subtract(clossestPoint, sphere.center));
+	if (distance <= sphere.radius) {
+		return true;
+	}
+
+	return false;
+
+}
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -618,9 +633,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.min{-0.5f, -0.5f, -0.5f},
 		.max{ 0.0f, 0.0f, 0.0f}
 	};
-	AABB aabb2{
-		.min{0.2f, 0.2f, 0.2f},
-		.max{ 1.0f, 1.0f, 1.0f}
+	Sphere sphere{
+		{1.0f, 1.0f, 1.0f},
+		0.1f
 	};
 
 	unsigned int color = BLACK;
@@ -678,11 +693,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("AABB1min", &aabb1.min.x, 0.1f, -1.0f, 5.0f);
 		ImGui::DragFloat3("AABB1max", &aabb1.max.x, 0.1f, -1.0f, 5.0f);
-		ImGui::DragFloat3("AABB2min", &aabb2.min.x, 0.1f, -1.0f, 5.0f);
-		ImGui::DragFloat3("AABB2max", &aabb2.max.x, 0.1f, -1.0f, 5.0f);
+		ImGui::DragFloat3("sphereCenter", &sphere.center.x, 0.1f, -1.0f, 5.0f);
+		ImGui::DragFloat("sphereRadius", &sphere.radius, 0.1f, -1.0f, 5.0f);
 		ImGui::TextUnformatted("UP:DOWN:LEFT:RIGHT::cameraRotate");
 		ImGui::End();
-		if (IsCollision(aabb1, aabb2)) {
+		if (IsCollision(aabb1, sphere)) {
 			color = RED;
 		}
 		else {
@@ -696,7 +711,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 		DrawAABB(aabb1, worldViewProjectionMatrix, viewPortMatrix, color);
-		DrawAABB(aabb2, worldViewProjectionMatrix, viewPortMatrix, 0xffffffff);
+		DrawSphere(sphere, worldViewProjectionMatrix, viewPortMatrix, 0xffffffff);
 		DrawGrid(worldViewProjectionMatrix, viewPortMatrix);
 		
 		///
