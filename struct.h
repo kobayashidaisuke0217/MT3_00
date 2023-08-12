@@ -22,3 +22,7 @@
  struct Triangle {
 	 Vector3 verticles[3];
  };
+ struct AABB {
+	 Vector3 min;
+	 Vector3 max;
+ };
