@@ -696,7 +696,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 		DrawAABB(aabb1, worldViewProjectionMatrix, viewPortMatrix, color);
-		DrawAABB(aabb2, worldViewProjectionMatrix, viewPortMatrix, 0xff00ffff);
+		DrawAABB(aabb2, worldViewProjectionMatrix, viewPortMatrix, 0xffffffff);
 		DrawGrid(worldViewProjectionMatrix, viewPortMatrix);
 		
 		///
